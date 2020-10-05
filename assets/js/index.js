@@ -71,14 +71,19 @@ $(document).ready(function() {
   }
   $('input[type="range"]').on('input', function () {
     changeTrack($(this))
+    curTime = $('.range').val()
   })
 
   function timedCount() {
     $('.range').val(curTime)
     changeTrack($('.range'))
     setBubble(range, bubble)
-    curTime ++
-    time = setTimeout(timedCount, 1000)
+    if (curTime == max) {
+      stopCount()
+    } else {
+      curTime ++
+      time = setTimeout(timedCount, 1000)
+    }
   }
 
   function startCount() {
@@ -93,6 +98,7 @@ $(document).ready(function() {
     timerIsOn = 0
   }
   $('#btn_play').click(function() {
+    curTime = $('.range').val()
     startCount()
   })
 
