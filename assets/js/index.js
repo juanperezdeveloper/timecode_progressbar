@@ -5,6 +5,10 @@ $(document).ready(function() {
   let markers = ['00:10:00', '00:25:00', '00:40:00', '00:50:00']
   let min = parseInt($('.range').attr('min'))
   let max = parseInt($('.range').attr('max'))
+  // play and stop
+  let time
+  let curTime = 0
+  let timerIsOn = 0
   // show start end end timecode
   $('.start-timecode').html(timeToTimeCode(min))
   $('.end-timecode').html(timeToTimeCode(max))
@@ -56,13 +60,43 @@ $(document).ready(function() {
     return hour * 3600 + minutes * 60 + seconds
   }
 
-  $('input[type="range"]').on('input', function () {
-    let timeCode = ($(this).val() - $(this).attr("min")) / ($(this).attr("max") - $(this).attr("min"))
-    $(this).css('background-image',
+  function changeTrack(elem) {
+    let timeCode = (elem.val() - elem.attr("min")) / (elem.attr("max") - elem.attr("min"))
+    elem.css('background-image',
                 '-webkit-gradient(linear, left top, right top, '
                 + 'color-stop(' + timeCode + ', rgb(39, 153, 255)), '
                 + 'color-stop(' + timeCode + ', rgb(240, 249, 255))'
                 + ')'
               )
+  }
+  $('input[type="range"]').on('input', function () {
+    changeTrack($(this))
+  })
+
+  function timedCount() {
+    $('.range').val(curTime)
+    changeTrack($('.range'))
+    setBubble(range, bubble)
+    curTime ++
+    time = setTimeout(timedCount, 1000)
+  }
+
+  function startCount() {
+    if (!timerIsOn) {
+      timerIsOn = 1
+      timedCount()
+    }
+  }
+
+  function stopCount() {
+    clearTimeout(time)
+    timerIsOn = 0
+  }
+  $('#btn_play').click(function() {
+    startCount()
+  })
+
+  $('#btn_stop').click(function() {
+    stopCount()
   })
 })
